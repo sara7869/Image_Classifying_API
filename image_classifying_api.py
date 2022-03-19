@@ -41,8 +41,29 @@ numpydata = asarray(image)
 
 print(numpydata.shape)
 
-model.predict(numpydata, batch_size=None, verbose=1, steps=None, callbacks=None,
+predictions = model.predict(numpydata, batch_size=None, verbose=1, steps=None, callbacks=None,
               max_queue_size=10, workers=1, use_multiprocessing=False)
+
+class_names = ['Acne and Rosacea Photos',
+ 'Actinic Keratosis Basal Cell Carcinoma and other Malignant Lesions',
+ 'Atopic Dermatitis Photos',
+ 'Bullous Disease Photos',
+ 'Cellulitis Impetigo and other Bacterial Infections',
+ 'Eczema Photos',
+ 'Exanthems and Drug Eruptions',
+ 'Hair Loss Photos Alopecia and other Hair Diseases',
+ 'Herpes HPV and other STDs Photos',
+ 'Light Diseases and Disorders of Pigmentation',
+ 'Lupus and other Connective Tissue diseases',
+ 'Melanoma Skin Cancer Nevi and Moles',
+ 'Nail Fungus and other Nail Disease',
+ 'Poison Ivy Photos and other Contact Dermatitis',
+ 'Psoriasis pictures Lichen Planus and related diseases',
+ 'Scabies Lyme Disease and other Infestations and Bites']
+
+predicted_class = class_names[np.argmax(predictions[0])]
+
+print (predicted_class)
 
 # split into input (X) and output (Y) variables
 # X = dataset[:,0:8]
