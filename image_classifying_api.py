@@ -31,7 +31,9 @@ model.summary()
 # load dataset
 # dataset = loadtxt("pima-indians-diabetes.csv", delimiter=",")
 
-image = image.load_img('erythema-multiforme-88.jpg', target_size=(128, 128))
+# image = image.load_img('erythema-multiforme-88.jpg', target_size=(128, 128))
+image = image.load_img('crest-syndrome-44.jpg', target_size=(128, 128))
+
 image = np.expand_dims(image, axis=0)
 # image = image.resize((128,128), Image.ANTIALIAS)
 
