@@ -12,11 +12,16 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-
+import numpy as np
 from json import load
 from numpy import loadtxt
 from keras.models import load_model
 from keras.preprocessing import image
+
+# Source: https://www.geeksforgeeks.org/how-to-convert-images-to-numpy-array/
+import PIL
+from PIL import Image
+from numpy import asarray
 
 # load model
 model = load_model('./2 Classes 1 Epoch Model')
@@ -26,8 +31,18 @@ model.summary()
 # load dataset
 # dataset = loadtxt("pima-indians-diabetes.csv", delimiter=",")
 
-image = image.load_img('erythema-multiforme-88.jpg', target_size=(350, 750))
-image.show()
+image = image.load_img('erythema-multiforme-88.jpg', target_size=(128, 128))
+image = np.expand_dims(image, axis=0)
+# image = image.resize((128,128), Image.ANTIALIAS)
+
+# image.show()
+# image = Image.open('erythema-multiforme-88.jpg', target_s)
+numpydata = asarray(image)
+
+print(numpydata.shape)
+
+model.predict(numpydata, batch_size=None, verbose=1, steps=None, callbacks=None,
+              max_queue_size=10, workers=1, use_multiprocessing=False)
 
 # split into input (X) and output (Y) variables
 # X = dataset[:,0:8]
@@ -38,16 +53,15 @@ image.show()
 
 # app = Flask(__name__)
 
-
 # @app.route('/', methods=['GET'])
 # def query_records():
 #     name = request.args.get('name')
 #     print(name)
-    # Read image and classify
-    # scores = model.evaluate(testImage)
-    # return ('Eczema')
+# Read image and classify
+# scores = model.evaluate(testImage)
+# return ('Eczema')
 
-    # return jsonify({'disease': 'Eczema'})
+# return jsonify({'disease': 'Eczema'})
 
 
 # @app.route('/', methods=['PUT'])
