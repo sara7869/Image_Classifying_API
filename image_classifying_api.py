@@ -24,7 +24,8 @@ from PIL import Image
 from numpy import asarray
 
 # load model
-model = load_model('./2 Classes 1 Epoch Model')
+# model = load_model('./2 Classes 1 Epoch Model')
+model = load_model('./5 Classes 5 Epoch')
 
 # summarize model.
 model.summary()
@@ -32,7 +33,7 @@ model.summary()
 # dataset = loadtxt("pima-indians-diabetes.csv", delimiter=",")
 
 # image = image.load_img('erythema-multiforme-88.jpg', target_size=(128, 128))
-image = image.load_img('crest-syndrome-44.jpg', target_size=(128, 128))
+image = image.load_img('03ichthyosis0213061.jpg', target_size=(128, 128))
 
 image = np.expand_dims(image, axis=0)
 # image = image.resize((128,128), Image.ANTIALIAS)
@@ -50,18 +51,7 @@ class_names = ['Acne and Rosacea Photos',
  'Actinic Keratosis Basal Cell Carcinoma and other Malignant Lesions',
  'Atopic Dermatitis Photos',
  'Bullous Disease Photos',
- 'Cellulitis Impetigo and other Bacterial Infections',
- 'Eczema Photos',
- 'Exanthems and Drug Eruptions',
- 'Hair Loss Photos Alopecia and other Hair Diseases',
- 'Herpes HPV and other STDs Photos',
- 'Light Diseases and Disorders of Pigmentation',
- 'Lupus and other Connective Tissue diseases',
- 'Melanoma Skin Cancer Nevi and Moles',
- 'Nail Fungus and other Nail Disease',
- 'Poison Ivy Photos and other Contact Dermatitis',
- 'Psoriasis pictures Lichen Planus and related diseases',
- 'Scabies Lyme Disease and other Infestations and Bites']
+ 'Cellulitis Impetigo and other Bacterial Infections']
 
 predicted_class = class_names[np.argmax(predictions[0])]
 
