@@ -28,7 +28,10 @@ model.summary()
 
 # image = image.load_img('erythema-multiforme-88.jpg', target_size=(128, 128))
 image = image.load_img('03ichthyosis0213061.jpg', target_size=(128, 128))
+# image = image.load_img('03ichthyosis0213061.jpg', target_size=(48, 48, 1))
 
+
+# image = np.expand_dims(image, axis=3)
 image = np.expand_dims(image, axis=0)
 # image = image.resize((128,128), Image.ANTIALIAS)
 
@@ -62,7 +65,7 @@ print(predicted_class)
 app = Flask(__name__)
 
 
-@app.route('/', methods=['GET'])
+@app.route('/', methods=['POST'])
 def query_records():
     # name = request.args.get('name')
     # print(name)
