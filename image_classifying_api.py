@@ -23,40 +23,21 @@ from PIL import Image
 from numpy import asarray
 
 # load model
-# model = load_model('./2 Classes 1 Epoch Model')
 model = load_model('./5 Classes 5 Epoch')
 
 # summarize model.
 model.summary()
-# load dataset
-# dataset = loadtxt("pima-indians-diabetes.csv", delimiter=",")
-
-# image = image.load_img('erythema-multiforme-88.jpg', target_size=(128, 128))
-# image = image.load_img('03ichthyosis0213061.jpg', target_size=(128, 128))
-# image = image.load_img('03ichthyosis0213061.jpg', target_size=(48, 48, 1))
-
-# image = np.expand_dims(image, axis=3)
-# image = np.expand_dims(image, axis=0)
-# image = image.resize((128,128), Image.ANTIALIAS)
-
-# image.show()
-# image = Image.open('erythema-multiforme-88.jpg', target_s)
-
-# split into input (X) and output (Y) variables
-# X = dataset[:,0:8]
-# Y = dataset[:,8]
-# evaluate the model
-# score = model.evaluate(X, Y, verbose=0)
-# print("%s: %.2f%%" % (model.metrics_names[1], score[1]*100))
 
 app = Flask(__name__)
 
 
-def classifyImage(image):
-    image = np.expand_dims(image, axis=3)
-    numpydata = asarray(image)
+def classifyImage(loaded_image):
+    loaded_image = np.expand_dims(loaded_image, axis=0)
+    numpydata = asarray(loaded_image)
 
     print(numpydata.shape)
+
+    print(numpydata)
 
     predictions = model.predict(numpydata, batch_size=None, verbose=1, steps=None, callbacks=None,
                                 max_queue_size=10, workers=1, use_multiprocessing=False)
@@ -76,33 +57,26 @@ def classifyImage(image):
 
 @app.route('/', methods=['POST'])
 def query_records():
-    # name = request.args.get('name')
-    # print(name)
-    # Read image and classify
-    # scores = model.evaluate(testImage)
-    # return ('Eczema')
 
     files = request.files
-    image = files.getlist('file_contents')[0]
-    filename = image.filename
+    image_file = files.getlist('file_contents')[0]
+    filename = image_file.filename
     filename = secure_filename(filename)
 
     current_directory_path = pathlib.Path(__file__).parent.resolve()
     current_directory_path_string = current_directory_path.__str__()
     path_at_uploads = current_directory_path_string + '/uploads/'
     path = os.path.join(path_at_uploads, secure_filename(filename))
-    image.save(path)
+    image_file.save(path)
+
+    loaded_image = image.load_img(path, target_size=(128, 128))
 
     print(request.files)
-    # classifyImage(image)
+    predicted_class = classifyImage(loaded_image)
 
     os.remove(path)
 
-    # return json.dumps(image)
-
-    # return json.dumps({'disease': predicted_class})
-
-    return json.dumps({'disease': 'Eczema'})
+    return json.dumps({'disease': predicted_class})
 
 
 app.run(debug=True)
