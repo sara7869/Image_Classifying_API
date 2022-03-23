@@ -9,6 +9,7 @@ from flask import Flask
 
 import json
 import numpy as np
+import tensorflow as tf
 from json import load
 from numpy import loadtxt
 from keras.models import load_model
@@ -34,14 +35,12 @@ model.summary()
 # image = image.load_img('03ichthyosis0213061.jpg', target_size=(128, 128))
 # image = image.load_img('03ichthyosis0213061.jpg', target_size=(48, 48, 1))
 
-
 # image = np.expand_dims(image, axis=3)
 # image = np.expand_dims(image, axis=0)
 # image = image.resize((128,128), Image.ANTIALIAS)
 
 # image.show()
 # image = Image.open('erythema-multiforme-88.jpg', target_s)
-
 
 # split into input (X) and output (Y) variables
 # X = dataset[:,0:8]
@@ -52,10 +51,9 @@ model.summary()
 
 app = Flask(__name__)
 
-# Assigns upload path to variable
-folder = os.path.join(app.instance_path, 'uploads')
 
-def classifyImage():
+def classifyImage(image):
+    image = np.expand_dims(image, axis=3)
     numpydata = asarray(image)
 
     print(numpydata.shape)
@@ -73,6 +71,7 @@ def classifyImage():
 
     print(predictions[0])
     print(predicted_class)
+    return predicted_class
 
 
 @app.route('/', methods=['POST'])
@@ -84,23 +83,26 @@ def query_records():
     # return ('Eczema')
 
     files = request.files
-    file = files.getlist('file_contents')[0]
-    filename = file.filename
+    image = files.getlist('file_contents')[0]
+    filename = image.filename
     filename = secure_filename(filename)
 
     current_directory_path = pathlib.Path(__file__).parent.resolve()
     current_directory_path_string = current_directory_path.__str__()
     path_at_uploads = current_directory_path_string + '/uploads/'
     path = os.path.join(path_at_uploads, secure_filename(filename))
-    file.save(path)
+    image.save(path)
 
     print(request.files)
-    classifyImage()
-    return json.dumps(file)
+    # classifyImage(image)
 
-    return json.dumps({'disease': predicted_class})
+    os.remove(path)
 
-    # return jsonify({'disease': 'Eczema'})
+    # return json.dumps(image)
+
+    # return json.dumps({'disease': predicted_class})
+
+    return json.dumps({'disease': 'Eczema'})
 
 
 app.run(debug=True)
