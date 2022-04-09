@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 # encoding: utf-8
+from operator import itemgetter
 import pathlib
 import os
 from flask import Flask
 import json
 import numpy as np
-# import tensorflow as tf
-# from json import load
-# from numpy import loadtxt
 from keras.models import load_model
 from keras.preprocessing import image
 from flask import request
@@ -19,19 +17,34 @@ from werkzeug.utils import secure_filename
 from numpy import asarray
 
 # load model
-model = load_model('./5 Classes 5 Epoch')
-
-# summarize model.
-model.summary()
+# model = load_model('./5 Classes 5 Epoch')
+model = load_model('./downloaded model')
 
 app = Flask(__name__)
 
-class_names = ['Acne and Rosacea Photos',
-               'Actinic Keratosis Basal Cell Carcinoma and other Malignant Lesions',
-               'Atopic Dermatitis Photos',
-               'Bullous Disease Photos',
-               'Cellulitis Impetigo and other Bacterial Infections']
-
+class_names = ['Acne and Rosacea',
+               'Actinic Keratosis Basal Cell Carcinoma or other Malignant Lesions',
+               'Atopic Dermatitis',
+               'Bullous Disease',
+               'Cellulitis Impetigo or other Bacterial Infections',
+               'Eczema',
+               'Exanthems and Drug Eruptions',
+               'Hair Loss, Alopecia or other Hair Diseases',
+               'Herpes HPV and other STDs',
+               'Light Diseases or Disorders of Pigmentation',
+               'Lupus or other Connective Tissue diseases',
+               'Melanoma, Skin Cancer, Nevi or Moles',
+               'Nail Fungus or other Nail Disease',
+               'Poison Ivy or other Contact Dermatitis',
+               'Psoriasis, Lichen Planus or related diseases',
+               'Scabies, Lyme Disease or other Infestations and Bites',
+               'Seborrheic Keratoses or other Benign Tumors',
+               'Systemic Disease',
+               'Tinea, Ringworm, Candidiasis or other Fungal Infections',
+               'Urticaria Hives',
+               'Vascular Tumors',
+               'Vasculitis',
+               'Warts, Molluscum or other Viral Infections']
 
 def classifyImage(loaded_image):
     loaded_image = np.expand_dims(loaded_image, axis=0)
@@ -40,13 +53,11 @@ def classifyImage(loaded_image):
     predictions = model.predict(numpydata, batch_size=None, verbose=1, steps=None, callbacks=None,
                                 max_queue_size=10, workers=1, use_multiprocessing=False)
 
-    # print(predictions[0])
 
     predicted_class = class_names[np.argmax(predictions[0])]
 
-    # predictions_array = predictions.ravel()
-
     print(predicted_class)
+
     return predictions[0]
 
 
@@ -72,7 +83,6 @@ def query_records():
 
     os.remove(path)
 
-    # range(5) => [0, 1, 2, 3, 4]
     records = []
     for x in range(predictions_list.__len__()):
         try:
@@ -83,11 +93,11 @@ def query_records():
         except Exception as exc:
             print("Only " + str(x + 1) + " class names found")
             break
-
-    # return json.dumps({'disease': predicted_class})
+    
+    sorted_records = sorted(records, key=itemgetter('confidence'), reverse=True)
 
     response_body = json.dumps({
-        'prediction_info': records
+        'prediction_info': sorted_records
     })
 
     return response_body
